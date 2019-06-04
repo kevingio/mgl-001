@@ -52,25 +52,26 @@
                         <v-form ref="formProduct" @submit.prevent="addToDetails()" class="mb-4" lazy-validation>
                             <v-layout wrap>
                                 <v-flex xs12 sm8>
-                                    <v-combobox
+                                    <v-select
                                     v-model="selectedProduct"
                                     :items="products"
                                     item-text="name"
                                     item-value="id"
                                     label="Select Product*"
                                     :rules="input.name.rules"
+                                    return-object
                                     required
                                     >
-                                    <template slot="item" slot-scope="data">
-                                        {{ data.item.name }}
-                                        <span class="green--text ml-1" v-if="data.item.qty > 4">
-                                            ({{ data.item.qty }} pcs)
-                                        </span>
-                                        <span class="red--text ml-1" v-else>
-                                            ({{ data.item.qty }} pcs)
-                                        </span>
-                                    </template>
-                                    </v-combobox>
+                                        <template slot="item" slot-scope="data">
+                                            {{ data.item.name }}
+                                            <span class="green--text ml-1" v-if="data.item.qty > 4">
+                                                ({{ data.item.qty }} pcs)
+                                            </span>
+                                            <span class="red--text ml-1" v-else>
+                                                ({{ data.item.qty }} pcs)
+                                            </span>
+                                        </template>
+                                    </v-select>
                                 </v-flex>
                                 <v-flex xs12 sm4>
                                     <v-text-field
@@ -159,7 +160,7 @@ export default {
                 },
                 products: [],
                 postingType: {
-                    value: null,
+                    value: 1,
                     rules: [
                         v => !!v || "Type can't be empty"
                     ]
@@ -249,9 +250,8 @@ export default {
         },
         clearInput() {
             this.input.memberName.value = this.input.pic.value = ''
-            this.input.postingType.value = null
             this.input.products = []
-            this.$refs.formProduct.resetValidation()
+            this.$refs.formInfo.resetValidation()
             this.stepper = 1
         }
     },

@@ -44921,7 +44921,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
                 qty: {
                     value: "",
                     rules: [function (v) {
-                        return !!v || "Quantity can't be empty";
+                        return v != '' || "Quantity can't be empty";
                     }, function (v) {
                         return (/^[0-9]*$/.test(v) || 'Quantity is not valid'
                         );
@@ -45491,7 +45491,7 @@ var render = function() {
                                     [
                                       _c("v-text-field", {
                                         attrs: {
-                                          label: "Nama Barang*",
+                                          label: "Product Name*",
                                           rules: _vm.input.name.rules,
                                           required: ""
                                         },
@@ -48310,6 +48310,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
@@ -48350,7 +48351,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
                 },
                 products: [],
                 postingType: {
-                    value: null,
+                    value: 1,
                     rules: [function (v) {
                         return !!v || "Type can't be empty";
                     }]
@@ -48522,9 +48523,8 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
         }(),
         clearInput: function clearInput() {
             this.input.memberName.value = this.input.pic.value = '';
-            this.input.postingType.value = null;
             this.input.products = [];
-            this.$refs.formProduct.resetValidation();
+            this.$refs.formInfo.resetValidation();
             this.stepper = 1;
         }
     },
@@ -48730,13 +48730,14 @@ var render = function() {
                                 "v-flex",
                                 { attrs: { xs12: "", sm8: "" } },
                                 [
-                                  _c("v-combobox", {
+                                  _c("v-select", {
                                     attrs: {
                                       items: _vm.products,
                                       "item-text": "name",
                                       "item-value": "id",
                                       label: "Select Product*",
                                       rules: _vm.input.name.rules,
+                                      "return-object": "",
                                       required: ""
                                     },
                                     scopedSlots: _vm._u([
@@ -48745,9 +48746,9 @@ var render = function() {
                                         fn: function(data) {
                                           return [
                                             _vm._v(
-                                              "\n                                    " +
+                                              "\n                                        " +
                                                 _vm._s(data.item.name) +
-                                                "\n                                    "
+                                                "\n                                        "
                                             ),
                                             data.item.qty > 4
                                               ? _c(
@@ -48758,9 +48759,9 @@ var render = function() {
                                                   },
                                                   [
                                                     _vm._v(
-                                                      "\n                                        (" +
+                                                      "\n                                            (" +
                                                         _vm._s(data.item.qty) +
-                                                        " pcs)\n                                    "
+                                                        " pcs)\n                                        "
                                                     )
                                                   ]
                                                 )
@@ -48772,9 +48773,9 @@ var render = function() {
                                                   },
                                                   [
                                                     _vm._v(
-                                                      "\n                                        (" +
+                                                      "\n                                            (" +
                                                         _vm._s(data.item.qty) +
-                                                        " pcs)\n                                    "
+                                                        " pcs)\n                                        "
                                                     )
                                                   ]
                                                 )
