@@ -129,15 +129,16 @@
                                     <v-form ref="formDetail" @submit.prevent="addToDetails()" class="mb-4" lazy-validation>
                                         <v-layout wrap>
                                             <v-flex xs12 sm8>
-                                                <v-combobox
+                                                <v-select
                                                 v-model="selectedProduct"
                                                 :items="products"
                                                 item-text="name"
                                                 item-value="id"
                                                 label="Select Product*"
                                                 :rules="input.name.rules"
+                                                return-object
                                                 required
-                                                ></v-combobox>
+                                                ></v-select>
                                             </v-flex>
                                             <v-flex xs12 sm4>
                                                 <v-text-field

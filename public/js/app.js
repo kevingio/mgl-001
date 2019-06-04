@@ -47021,6 +47021,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
@@ -47798,13 +47799,14 @@ var render = function() {
                                             "v-flex",
                                             { attrs: { xs12: "", sm8: "" } },
                                             [
-                                              _c("v-combobox", {
+                                              _c("v-select", {
                                                 attrs: {
                                                   items: _vm.products,
                                                   "item-text": "name",
                                                   "item-value": "id",
                                                   label: "Select Product*",
                                                   rules: _vm.input.name.rules,
+                                                  "return-object": "",
                                                   required: ""
                                                 },
                                                 model: {
