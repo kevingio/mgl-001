@@ -17,7 +17,6 @@
                                     v-model="form.username.value"
                                     :rules="form.username.rules"
                                     type="text"
-                                    autofocus
                                 ></v-text-field>
                                 <v-text-field
                                     prepend-icon="lock"
@@ -76,17 +75,21 @@ export default {
     methods: {
         async login(){
             if(this.$refs.form.validate()) {
+                this.isSubmitted = true
                 axios.post('/api/auth/login',{
     				username:this.form.username.value,
     				password:this.form.password.value
-    			}).then(res => this.saveToken(res));
+    			}).then(response => {
+                    localStorage.setItem('stockist-data', JSON.stringify(res.data))
+                    this.$router.replace('/');
+                }).catch(() => {
+                    this.wrongCredentials = true
+                    this.form.username.value = ''
+                    this.form.password.value = ''
+                    this.$refs.form.resetValidation()
+                })
             }
         },
-        saveToken(res){
-            localStorage.setItem('stockist-data', JSON.stringify(res.data))
-            this.$router.replace('/');
-            console.log('tes');
-    	}
     },
 }
 </script>

@@ -206,7 +206,7 @@ export default {
             this.dialogEdit = true
         },
         updateProduct() {
-            if (this.$refs.formAdd.validate()) {
+            if (this.$refs.formEdit.validate()) {
                 axios.patch('/api/product/' + this.editedProduct.id, this.editedProduct,
                     {
                         headers: {
