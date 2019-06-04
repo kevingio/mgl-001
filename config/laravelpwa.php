@@ -7,7 +7,7 @@ return [
         'short_name' => 'Stockist MGL',
         'start_url' => env('APP_URL'),
         'background_color' => '#ffffff',
-        'theme_color' => '#000000',
+        'theme_color' => '#DB0000',
         'display' => 'standalone',
         'orientation'=> 'portrait',
         'icons' => [
