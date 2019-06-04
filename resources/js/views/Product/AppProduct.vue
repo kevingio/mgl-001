@@ -101,7 +101,7 @@
                                 <v-layout wrap>
                                     <v-flex xs12>
                                         <v-text-field
-                                        label="Nama Barang*"
+                                        label="Product Name*"
                                         v-model="editedProduct.name"
                                         :rules="input.name.rules"
                                         required
@@ -156,7 +156,7 @@ export default {
                 qty: {
                     value: "",
                     rules: [
-                        v => (!!v) || "Quantity can't be empty",
+                        v => v != '' || "Quantity can't be empty",
                         v => (/^[0-9]*$/.test(v)) || 'Quantity is not valid',
                     ],
                 },
