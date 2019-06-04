@@ -6,8 +6,7 @@
                     <v-card class="pa-5" elevation="10">
                     <v-layout row wrap justify-center align-center>
                         <v-flex xs12 sd8 md6>
-                            <v-img src="/images/logo-mss.png" contain max-height="150">
-                            </v-img>
+                            <v-img src="/images/logo-mss.png" contain max-height="150"></v-img>
                         </v-flex>
                         <v-flex xs12 sm8 md6>
                             <v-form ref="form" @submit.prevent="login" lazy-validation>

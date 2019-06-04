@@ -64,10 +64,24 @@ Vue.prototype.$errorAlert = function() {
 }
 
 import AppRoot from './AppRoot'
-const app = new Vue({
-    el: '#app',
-    router,
-    components: {
-        AppRoot,
-    },
-});
+var root = document.getElementById("app");
+if(root){
+    const app = new Vue({
+        el: '#app',
+        router,
+        components: {
+            AppRoot,
+        },
+    });
+}
+
+import AppOffline from './AppOffline'
+var offline = document.getElementById("offline");
+if(offline){
+    const appOffline = new Vue({
+        el: '#offline',
+        components: {
+            AppOffline
+        },
+    });
+}

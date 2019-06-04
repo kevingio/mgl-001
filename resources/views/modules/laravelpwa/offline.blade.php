@@ -10,11 +10,18 @@
         <title>Stockist Magelang Agency</title>
         <link rel="icon" href="favicon.png">
         <link rel="stylesheet" href="{{ mix('/css/app.css') }}">
-        @laravelPWA
+        <style media="screen">
+            html, body {
+                min-height: 100%;
+            }
+            #offline {
+                height: 100%;
+            }
+        </style>
     </head>
     <body>
-        <div id="app">
-            <app-root></app-root>
+        <div id="offline">
+            <app-offline></app-offline>
         </div>
         <script src="{{ mix('/js/app.js') }}" charset="utf-8"></script>
     </body>
