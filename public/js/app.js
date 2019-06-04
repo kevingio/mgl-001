@@ -48313,15 +48313,31 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
         return {
             stepper: 0,
             products: [],
+            packages: [],
             postingTypes: [],
             selectedProduct: null,
-            search: '',
+            selectedPackage: null,
             headers: [{ text: 'Product Name', value: 'name' }, { text: 'Quantity', value: 'qty', width: '15%' }, { text: 'Note', value: 'note', width: '30%' }, { text: 'Action', value: 'created_at', sortable: false, align: 'center', width: '10%' }],
             input: {
                 name: {
@@ -48370,20 +48386,40 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
                 var check = null;
                 var note = '';
                 this.$refs.formProduct.resetValidation();
-                this.input.products.map(function (product) {
-                    if (product.product_id == _this.selectedProduct.id) {
-                        check = true;
-                        product.qty += _this.input.qty.value;
-                        product.note = _this.checkIndentProduct();
+                if ([1, 2].indexOf(this.input.postingType.value) == -1) {
+                    this.input.products.map(function (product) {
+                        if (product.product_id == _this.selectedProduct.id) {
+                            check = true;
+                            product.qty += _this.input.qty.value;
+                            product.note = _this.checkIndentProduct();
+                        }
+                    });
+                    if (!check) {
+                        note = this.checkIndentProduct();
+                        this.input.products.push({ product_id: this.selectedProduct.id, name: this.selectedProduct.name, qty: this.input.qty.value, note: note });
                     }
-                });
-                if (!check) {
-                    note = this.checkIndentProduct();
-                    this.input.products.push({ product_id: this.selectedProduct.id, name: this.selectedProduct.name, qty: this.input.qty.value, note: note });
+                    this.selectedProduct = null;
+                    this.products[this.getIndex()].qty -= this.input.qty.value;
+                } else {
+                    this.selectedPackage.details.map(function (productInPackage) {
+                        var tempQty = productInPackage.qty * _this.input.qty.value;
+                        _this.input.products.map(function (product) {
+                            if (product.product_id == productInPackage.product_id) {
+                                check = true;
+                                product.qty += tempQty;
+                                product.note = _this.checkIndentProduct(productInPackage);
+                            }
+                        });
+                        if (!check) {
+                            check = false;
+                            note = _this.checkIndentProduct(productInPackage);
+                            _this.input.products.push({ product_id: productInPackage.product_id, name: productInPackage.product.name, qty: tempQty, note: note });
+                        }
+                        _this.products[_this.getIndex(productInPackage)].qty -= tempQty;
+                    });
+                    this.selectedPackage = null;
                 }
-                this.products[this.getIndex()].qty -= this.input.qty.value;
                 this.input.qty.value = '';
-                this.selectedProduct = null;
             }
         },
         removeFromDetails: function removeFromDetails(product) {
@@ -48435,21 +48471,30 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
             return newPosting;
         }(),
-        getIndex: function getIndex() {
+        getIndex: function getIndex(item) {
             var _this3 = this;
 
             var idx = -1;
-            this.products.map(function (product, index) {
-                if (product.name === _this3.selectedProduct.name) {
-                    idx = index;
-                    return;
-                }
-            });
+            if (item) {
+                this.products.map(function (product, index) {
+                    if (product.name === item.product.name) {
+                        idx = index;
+                        return;
+                    }
+                });
+            } else {
+                this.products.map(function (product, index) {
+                    if (product.name === _this3.selectedProduct.name) {
+                        idx = index;
+                        return;
+                    }
+                });
+            }
             return idx;
         },
-        checkIndentProduct: function checkIndentProduct() {
-            var diff = this.products[this.getIndex()].qty - this.input.qty.value;
-            return diff >= 1 ? '-' : 'INDENT ' + Math.abs(diff) + ' PCS';
+        checkIndentProduct: function checkIndentProduct(item) {
+            var diff = this.products[this.getIndex(item)].qty - (item != null ? item.qty * this.input.qty.value : this.input.qty.value);
+            return diff >= 0 ? '-' : 'INDENT ' + Math.abs(diff) + ' PCS';
         },
         fetchProducts: function () {
             var _ref2 = _asyncToGenerator( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee2() {
@@ -48523,6 +48568,42 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
             return fetchPostingTypes;
         }(),
+        fetchPackages: function () {
+            var _ref4 = _asyncToGenerator( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee4() {
+                var _this6 = this;
+
+                return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.wrap(function _callee4$(_context4) {
+                    while (1) {
+                        switch (_context4.prev = _context4.next) {
+                            case 0:
+                                _context4.next = 2;
+                                return axios.get('/api/package', {
+                                    headers: {
+                                        'Accept': 'application/json',
+                                        'Content-type': 'application/json',
+                                        'Authorization': 'Bearer ' + this.$getToken()
+                                    }
+                                }).then(function (response) {
+                                    _this6.packages = response.data.items;
+                                });
+
+                            case 2:
+                                return _context4.abrupt('return', _context4.sent);
+
+                            case 3:
+                            case 'end':
+                                return _context4.stop();
+                        }
+                    }
+                }, _callee4, this);
+            }));
+
+            function fetchPackages() {
+                return _ref4.apply(this, arguments);
+            }
+
+            return fetchPackages;
+        }(),
         clearInput: function clearInput() {
             this.input.memberName.value = this.input.pic.value = '';
             this.input.products = [];
@@ -48533,6 +48614,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
     mounted: function mounted() {
         this.fetchProducts();
         this.fetchPostingTypes();
+        this.fetchPackages();
     }
 });
 
@@ -48732,67 +48814,96 @@ var render = function() {
                                 "v-flex",
                                 { attrs: { xs12: "", sm8: "" } },
                                 [
-                                  _c("v-select", {
-                                    attrs: {
-                                      items: _vm.products,
-                                      "item-text": "name",
-                                      "item-value": "id",
-                                      label: "Select Product*",
-                                      rules: _vm.input.name.rules,
-                                      "return-object": "",
-                                      required: ""
-                                    },
-                                    scopedSlots: _vm._u([
-                                      {
-                                        key: "item",
-                                        fn: function(data) {
-                                          return [
-                                            _vm._v(
-                                              "\n                                        " +
-                                                _vm._s(data.item.name) +
-                                                "\n                                        "
-                                            ),
-                                            data.item.qty > 4
-                                              ? _c(
-                                                  "span",
-                                                  {
-                                                    staticClass:
-                                                      "green--text ml-1"
-                                                  },
-                                                  [
-                                                    _vm._v(
-                                                      "\n                                            (" +
-                                                        _vm._s(data.item.qty) +
-                                                        " pcs)\n                                        "
-                                                    )
-                                                  ]
-                                                )
-                                              : _c(
-                                                  "span",
-                                                  {
-                                                    staticClass:
-                                                      "red--text ml-1"
-                                                  },
-                                                  [
-                                                    _vm._v(
-                                                      "\n                                            (" +
-                                                        _vm._s(data.item.qty) +
-                                                        " pcs)\n                                        "
-                                                    )
-                                                  ]
-                                                )
-                                          ]
+                                  [1, 2].indexOf(_vm.input.postingType.value) ==
+                                  -1
+                                    ? _c("v-select", {
+                                        attrs: {
+                                          items: _vm.products,
+                                          "item-text": "name",
+                                          "item-value": "id",
+                                          label: "Select Product*",
+                                          rules: _vm.input.name.rules,
+                                          "return-object": "",
+                                          required: ""
+                                        },
+                                        scopedSlots: _vm._u(
+                                          [
+                                            {
+                                              key: "item",
+                                              fn: function(data) {
+                                                return [
+                                                  _vm._v(
+                                                    "\n                                        " +
+                                                      _vm._s(data.item.name) +
+                                                      "\n                                        "
+                                                  ),
+                                                  data.item.qty > 4
+                                                    ? _c(
+                                                        "strong",
+                                                        {
+                                                          staticClass:
+                                                            "green--text ml-1"
+                                                        },
+                                                        [
+                                                          _vm._v(
+                                                            "\n                                            (" +
+                                                              _vm._s(
+                                                                data.item.qty
+                                                              ) +
+                                                              " pcs)\n                                        "
+                                                          )
+                                                        ]
+                                                      )
+                                                    : _c(
+                                                        "strong",
+                                                        {
+                                                          staticClass:
+                                                            "red--text ml-1"
+                                                        },
+                                                        [
+                                                          _vm._v(
+                                                            "\n                                            (" +
+                                                              _vm._s(
+                                                                data.item.qty
+                                                              ) +
+                                                              " pcs)\n                                        "
+                                                          )
+                                                        ]
+                                                      )
+                                                ]
+                                              }
+                                            }
+                                          ],
+                                          null,
+                                          false,
+                                          3792813000
+                                        ),
+                                        model: {
+                                          value: _vm.selectedProduct,
+                                          callback: function($$v) {
+                                            _vm.selectedProduct = $$v
+                                          },
+                                          expression: "selectedProduct"
                                         }
-                                      }
-                                    ]),
-                                    model: {
-                                      value: _vm.selectedProduct,
-                                      callback: function($$v) {
-                                        _vm.selectedProduct = $$v
-                                      },
-                                      expression: "selectedProduct"
-                                    }
-                                  })
+                                      })
+                                    : _c("v-select", {
+                                        attrs: {
+                                          items: _vm.packages,
+                                          "item-text": "name_with_products",
+                                          "item-value": "id",
+                                          label: "Select Package*",
+                                          rules: _vm.input.name.rules,
+                                          "return-object": "",
+                                          required: ""
+                                        },
+                                        model: {
+                                          value: _vm.selectedPackage,
+                                          callback: function($$v) {
+                                            _vm.selectedPackage = $$v
+                                          },
+                                          expression: "selectedPackage"
+                                        }
+                                      })
                                 ],
                                 1
                               ),

@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
+    use SoftDeletes;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -17,11 +20,9 @@ class Product extends Model
     ];
 
     /**
-     * The attributes that should be hidden for arrays.
+     * The attributes that are assign to date.
      *
      * @var array
      */
-    // protected $hidden = [
-    //     'created_at', 'updated_at'
-    // ];
+    protected $dates =['deleted_at'];
 }

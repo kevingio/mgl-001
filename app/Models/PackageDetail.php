@@ -4,27 +4,29 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PostingDetail extends Model
+class PackageDetail extends Model
 {
+
     public $timestamps = false;
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'posting_id',
+        'package_id',
         'product_id',
         'qty',
     ];
 
+    public function package()
+    {
+        return $this->belongsTo(Package::class);
+    }
+
     public function product()
     {
         return $this->belongsTo(Product::class)->withTrashed();
-    }
-
-    public function posting()
-    {
-        return $this->belongsTo(Posting::class);
     }
 }

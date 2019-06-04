@@ -61,16 +61,30 @@
                                     :rules="input.name.rules"
                                     return-object
                                     required
+                                    v-if="[1,2].indexOf(input.postingType.value) == -1"
                                     >
                                         <template slot="item" slot-scope="data">
                                             {{ data.item.name }}
-                                            <span class="green--text ml-1" v-if="data.item.qty > 4">
+                                            <strong class="green--text ml-1" v-if="data.item.qty > 4">
                                                 ({{ data.item.qty }} pcs)
-                                            </span>
-                                            <span class="red--text ml-1" v-else>
+                                            </strong>
+                                            <strong class="red--text ml-1" v-else>
                                                 ({{ data.item.qty }} pcs)
-                                            </span>
+                                            </strong>
                                         </template>
+                                    </v-select>
+
+                                    <v-select
+                                    v-model="selectedPackage"
+                                    :items="packages"
+                                    item-text="name_with_products"
+                                    item-value="id"
+                                    label="Select Package*"
+                                    :rules="input.name.rules"
+                                    return-object
+                                    required
+                                    v-else
+                                    >
                                     </v-select>
                                 </v-flex>
                                 <v-flex xs12 sm4>
@@ -86,12 +100,13 @@
                                 </v-flex>
                             </v-layout>
                         </v-form>
+
                         <v-data-table
-                            :headers="headers"
-                            :items="input.products"
-                            disable-initial-sort
-                            :rows-per-page-items="[10]"
-                            >
+                        :headers="headers"
+                        :items="input.products"
+                        disable-initial-sort
+                        :rows-per-page-items="[10]"
+                        >
                             <template slot="items" slot-scope="props">
                                 <td>{{ props.item.name }}</td>
                                 <td>{{ props.item.qty }}</td>
@@ -123,9 +138,10 @@ export default {
         return {
             stepper: 0,
             products: [],
+            packages: [],
             postingTypes: [],
             selectedProduct: null,
-            search: '',
+            selectedPackage: null,
             headers: [
                 { text: 'Product Name', value: 'name' },
                 { text: 'Quantity', value: 'qty', width: '15%' },
@@ -174,20 +190,40 @@ export default {
                 var check = null
                 var note = ''
                 this.$refs.formProduct.resetValidation()
-                this.input.products.map(product => {
-                    if(product.product_id == this.selectedProduct.id) {
-                        check = true
-                        product.qty += this.input.qty.value
-                        product.note = this.checkIndentProduct()
+                if([1,2].indexOf(this.input.postingType.value) == -1) {
+                    this.input.products.map(product => {
+                        if(product.product_id == this.selectedProduct.id) {
+                            check = true
+                            product.qty += this.input.qty.value
+                            product.note = this.checkIndentProduct()
+                        }
+                    })
+                    if(!check) {
+                        note = this.checkIndentProduct()
+                        this.input.products.push({ product_id: this.selectedProduct.id, name: this.selectedProduct.name, qty: this.input.qty.value, note: note })
                     }
-                })
-                if(!check) {
-                    note = this.checkIndentProduct()
-                    this.input.products.push({ product_id: this.selectedProduct.id, name: this.selectedProduct.name, qty: this.input.qty.value, note: note })
+                    this.selectedProduct = null
+                    this.products[this.getIndex()].qty -= this.input.qty.value
+                } else {
+                    this.selectedPackage.details.map(productInPackage => {
+                        const tempQty = productInPackage.qty * this.input.qty.value
+                        this.input.products.map(product => {
+                            if(product.product_id == productInPackage.product_id) {
+                                check = true
+                                product.qty += tempQty
+                                product.note = this.checkIndentProduct(productInPackage)
+                            }
+                        })
+                        if(!check) {
+                            check = false
+                            note = this.checkIndentProduct(productInPackage)
+                            this.input.products.push({ product_id: productInPackage.product_id, name: productInPackage.product.name, qty: tempQty, note: note })
+                        }
+                        this.products[this.getIndex(productInPackage)].qty -= tempQty
+                    })
+                    this.selectedPackage = null
                 }
-                this.products[this.getIndex()].qty -= this.input.qty.value
                 this.input.qty.value = ''
-                this.selectedProduct = null
             }
         },
         removeFromDetails(product) {
@@ -212,19 +248,28 @@ export default {
                 this.clearInput()
             }
         },
-        getIndex() {
+        getIndex(item) {
             var idx = -1
-            this.products.map((product, index) => {
-                if(product.name === this.selectedProduct.name) {
-                    idx = index
-                    return
-                }
-            })
+            if(item) {
+                this.products.map((product, index) => {
+                    if(product.name === item.product.name) {
+                        idx = index
+                        return
+                    }
+                })
+            } else {
+                this.products.map((product, index) => {
+                    if(product.name === this.selectedProduct.name) {
+                        idx = index
+                        return
+                    }
+                })
+            }
             return idx
         },
-        checkIndentProduct() {
-            const diff = this.products[this.getIndex()].qty - this.input.qty.value
-            return diff >= 1 ? '-' : 'INDENT ' + Math.abs(diff) + ' PCS'
+        checkIndentProduct(item) {
+            const diff = this.products[this.getIndex(item)].qty - (item != null ? item.qty * this.input.qty.value : this.input.qty.value)
+            return diff >= 0 ? '-' : 'INDENT ' + Math.abs(diff) + ' PCS'
         },
         async fetchProducts() {
             return await axios.get('/api/product' ,{
@@ -248,6 +293,17 @@ export default {
                 this.postingTypes = response.data.items
             })
         },
+        async fetchPackages() {
+            return await axios.get('/api/package' ,{
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json',
+                    'Authorization': 'Bearer ' + this.$getToken()
+                }
+            }).then((response) => {
+                this.packages = response.data.items
+            })
+        },
         clearInput() {
             this.input.memberName.value = this.input.pic.value = ''
             this.input.products = []
@@ -258,6 +314,7 @@ export default {
     mounted() {
         this.fetchProducts()
         this.fetchPostingTypes()
+        this.fetchPackages()
     }
 }
 </script>
