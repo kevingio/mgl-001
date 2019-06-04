@@ -4,8 +4,8 @@ return [
     'name' => 'Stockist MGL',
     'manifest' => [
         'name' => 'Stockist MGL',
-        'short_name' => '',
-        'start_url' => '/',
+        'short_name' => 'Stockist MGL',
+        'start_url' => env('APP_URL'),
         'background_color' => '#ffffff',
         'theme_color' => '#000000',
         'display' => 'standalone',
