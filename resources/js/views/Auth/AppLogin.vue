@@ -84,6 +84,7 @@ export default {
                     this.$router.replace('/');
                 }).catch(() => {
                     this.wrongCredentials = true
+                    this.isSubmitted = false
                     this.form.username.value = ''
                     this.form.password.value = ''
                     this.$refs.form.resetValidation()
