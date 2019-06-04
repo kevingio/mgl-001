@@ -25,6 +25,7 @@ Route::group(['middleware' => ['api', 'jwt.auth']], function () {
     Route::resource('product', 'ProductController');
     Route::resource('receiving-report', 'ReceivingReportController');
     Route::resource('indent', 'IndentController');
+    Route::resource('package', 'PackageController');
     Route::resource('posting', 'PostingController');
     Route::resource('posting-type', 'PostingTypeController');
 });

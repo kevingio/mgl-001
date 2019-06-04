@@ -22,9 +22,9 @@ class Posting extends Model
      *
      * @var array
      */
-     protected $casts = [
-         'created_at' => 'date:l, jS F Y',
-     ];
+    protected $casts = [
+        'created_at' => 'date:l, jS F Y',
+    ];
 
     public function details()
     {
