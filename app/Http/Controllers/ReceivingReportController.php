@@ -56,6 +56,7 @@ class ReceivingReportController extends Controller
                 $receivingReport->details()->create($product);
                 $this->product->find($product['product_id'])->increment('qty', $product['qty']);
             }
+            $receivingReport = $this->receivingReport->with('details.product')->find($receivingReport->id);
 
             DB::commit();
             return response()->json([

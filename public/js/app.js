@@ -47113,7 +47113,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
                                 this.dialogAdd = false;
                                 _context.next = 6;
                                 return axios.post('/api/receiving-report', data).then(function (response) {
-                                    _this2.receivingReports.splice(0, 0, data);
+                                    _this2.receivingReports.splice(0, 0, response.data.item);
                                     _this2.$successAlert('Receiving Report', 1);
                                 }).catch(function () {
                                     _this2.$errorAlert();
@@ -49068,7 +49068,6 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
@@ -49103,11 +49102,19 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
                         switch (_context.prev = _context.next) {
                             case 0:
                                 if (this.$refs.form.validate()) {
+                                    this.isSubmitted = true;
                                     axios.post('/api/auth/login', {
                                         username: this.form.username.value,
                                         password: this.form.password.value
-                                    }).then(function (res) {
-                                        return _this.saveToken(res);
+                                    }).then(function (response) {
+                                        localStorage.setItem('stockist-data', JSON.stringify(response.data));
+                                        _this.$router.replace('/');
+                                    }).catch(function () {
+                                        _this.wrongCredentials = true;
+                                        _this.isSubmitted = false;
+                                        _this.form.username.value = '';
+                                        _this.form.password.value = '';
+                                        _this.$refs.form.resetValidation();
                                     });
                                 }
 
@@ -49124,12 +49131,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
             }
 
             return login;
-        }(),
-        saveToken: function saveToken(res) {
-            localStorage.setItem('stockist-data', JSON.stringify(res.data));
-            this.$router.replace('/');
-            console.log('tes');
-        }
+        }()
     }
 });
 
@@ -49212,8 +49214,7 @@ var render = function() {
                                       "prepend-icon": "person",
                                       label: "Username",
                                       rules: _vm.form.username.rules,
-                                      type: "text",
-                                      autofocus: ""
+                                      type: "text"
                                     },
                                     model: {
                                       value: _vm.form.username.value,

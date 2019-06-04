@@ -296,7 +296,7 @@ export default {
                 this.dialogAdd = false
                 await axios.post('/api/receiving-report', data)
                 .then((response) => {
-                    this.receivingReports.splice(0, 0, data)
+                    this.receivingReports.splice(0, 0, response.data.item)
                     this.$successAlert('Receiving Report', 1)
                 }).catch(() => {
                     this.$errorAlert()
