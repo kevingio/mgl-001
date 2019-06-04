@@ -79,8 +79,8 @@ export default {
                 axios.post('/api/auth/login',{
     				username:this.form.username.value,
     				password:this.form.password.value
-    			}).then(response => {
-                    localStorage.setItem('stockist-data', JSON.stringify(res.data))
+    			}).then((response) => {
+                    localStorage.setItem('stockist-data', JSON.stringify(response.data))
                     this.$router.replace('/');
                 }).catch(() => {
                     this.wrongCredentials = true
