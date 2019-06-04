@@ -315,6 +315,12 @@ export default {
         this.fetchProducts()
         this.fetchPostingTypes()
         this.fetchPackages()
+    },
+    watch: {
+        'input.postingType.value'() {
+            this.fetchProducts()
+            this.input.products = []
+        }
     }
 }
 </script>

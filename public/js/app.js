@@ -48615,6 +48615,13 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
         this.fetchProducts();
         this.fetchPostingTypes();
         this.fetchPackages();
+    },
+
+    watch: {
+        'input.postingType.value': function inputPostingTypeValue() {
+            this.fetchProducts();
+            this.input.products = [];
+        }
     }
 });
 
